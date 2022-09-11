@@ -21,9 +21,10 @@ import mlflow
 from mlflow.tracking import MlflowClient
 
 from prefect import flow, task, get_run_logger
-from prefect.task_runners import SequentialTaskRunner
+#from prefect.task_runners import SequentialTaskRunner
+from prefect.infrastructure import Process
 
-from prefect.deployments import DeploymentSpec
+from prefect.deployments import Deployment
 from prefect.orion.schemas.schedules import RRuleSchedule
 
 from prefect.flow_runners import SubprocessFlowRunner
@@ -145,7 +146,8 @@ def run_experiments(X_train_transformed, y_train, X_test_transformed, y_test):
         
 
 
-@flow(task_runner=SequentialTaskRunner())
+#@flow(task_runner=SequentialTaskRunner())
+@flow
 def main(date="2021-09-12"):
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("wine_qualit_clf")    
