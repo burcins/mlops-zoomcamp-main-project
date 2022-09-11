@@ -68,10 +68,6 @@ def train_model(df, numeric_columns, date):
                                                         random_state=123)
 
 
-        for data in [X_train, X_test, y_train, y_test]:
-            name =[x for x in globals() if globals()[x] is data][0]
-            print(name, data.shape)
-        
         ct = ColumnTransformer([
         ('one-hot', OneHotEncoder(handle_unknown='ignore'), ['type']),
         ('scaler', StandardScaler(), numeric_columns)], remainder='drop')
@@ -114,10 +110,8 @@ def xgb_objective(trial, X_train, y_train, X_test, y_test):
             "objective": trial.suggest_categorical(
                 "objective", ["binary:logistic", "binary:hinge"]
             ),
-            "num_boost_round":20,
             "eval_metric" : "logloss",
-            "random_state": 123,
-            "n_iter_no_change": 10 # early stopping
+            "random_state": 123
 
         }
         # Perform CV
@@ -162,19 +156,6 @@ def main(date="2021-09-12"):
         
     run_experiments(X_train_transformed, y_train, X_test_transformed, y_test)
    
-
-DeploymentSpec(
-    flow=main,
-    name="model_training-homework",
-    schedule=RRuleSchedule(
-        #rrule="DTSTART:20220101T000000\nFREQ=DAILY", 
-        rrule =      """DTSTART:20220611T090000
-                    RRULE:FREQ=MONTHLY;BYMONTHDAY=15;BYHOUR=9;BYMINUTE=0;BYSECOND=0
-                    """,
-                    timezone="America/New_York"),
-    flow_runner=SubprocessFlowRunner(),
-    tags=["main-project"]
-)
 
     
 if __name__ == '__main__':
