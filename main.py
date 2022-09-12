@@ -3,6 +3,7 @@
 
 import pandas as pd
 import numpy as np
+import datetime
 
 from sklearn.model_selection import train_test_split
 
@@ -14,8 +15,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import xgboost as xgb
 
 import optuna
-from sklearn.metrics import cohen_kappa_score
-import pickle
+from sklearn.pipeline import Pipeline
+import joblib
 
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -60,44 +61,39 @@ def prepare_data():
 
 
 @task
-def train_model(df, numeric_columns, date):
+def train_model(df, numeric_columns):
+    
     with mlflow.start_run():
 
-
+        date = datetime.datetime.today().strftime("%Y-%m-%d/%H_%M")
         X_train, X_test, y_train, y_test = train_test_split(df.drop('quality', axis=1), df.quality,
                                                         stratify=df.quality, 
                                                         test_size=0.3,
                                                         random_state=123)
 
 
-        ct = ColumnTransformer([
-        ('one-hot', OneHotEncoder(handle_unknown='ignore'), ['type']),
-        ('scaler', StandardScaler(), numeric_columns)], remainder='drop')
-
-
-        model = OneVsRestClassifier(xgb.XGBClassifier(random_state= 123, eval_metric='logloss'))
-        
-        X_train_transformed = ct.fit_transform(X_train)
-        X_test_transformed = ct.transform(X_test)
-        
-        model.fit(X_train_transformed, y_train)
-        preds = model.predict(X_test_transformed)
-
-
-        with open('xgb.bin', 'wb') as f_out:
-            pickle.dump((ct, ), f_out)
-                        
-            mlflow.set_tag("developer", "burcin")
-
-        mlflow.sklearn.log_model(model, artifact_path="models/model-{}".format(date))
+        pipe = Pipeline([
+            ('column_transformer', ColumnTransformer([
+                ('one-hot', OneHotEncoder(handle_unknown='ignore'), ['type']),
+                ('scaler', StandardScaler(), numeric_columns)], remainder='drop')),
+            ('model', OneVsRestClassifier(xgb.XGBClassifier(random_state= 123, eval_metric='logloss')))])
             
-    return X_train_transformed, X_test_transformed, y_train, y_test, model, ct
+        pipe.fit(X_train, y_train)
+        preds = pipe.predict(X_test)
+
+        #joblib.dump(pipe, 'pipeline-{}.pkl'.format(date))
+                        
+        mlflow.set_tag("developer", "burcin")
+
+        mlflow.sklearn.log_model(pipe, artifact_path="models/model-{}".format(date))
+            
+    return X_train, X_test, y_train, y_test, pipe
 
 
 
 
 
-def xgb_objective(trial, X_train, y_train, X_test, y_test):
+def xgb_objective(trial, X_train, y_train, X_test, y_test, numeric_columns):
     with mlflow.start_run():
         mlflow.set_tag("model", "xgboost")
 
@@ -121,24 +117,32 @@ def xgb_objective(trial, X_train, y_train, X_test, y_test):
             
         model = OneVsRestClassifier(xgb.XGBClassifier(**params))
         
-        model.fit(X_train, y_train)
         
-        preds = model.predict(X_test)
+        pipe = Pipeline([
+            ('column_transformer', ColumnTransformer([
+                ('one-hot', OneHotEncoder(handle_unknown='ignore'), ['type']),
+                ('scaler', StandardScaler(), numeric_columns)], remainder='drop')),
+            ('model', model)])
+            
+        pipe.fit(X_train, y_train)
+        preds = pipe.predict(X_test)
         
         score = accuracy_score(y_test, preds)
         
         mlflow.log_metric("accuracy_score", score)
+        mlflow.sklearn.log_model(pipe, artifact_path="model")
+    
         
     return score
         
 @task       
-def run_experiments(X_train_transformed, y_train, X_test_transformed, y_test):
+def run_experiments(X_train, y_train, X_test, y_test, numeric_columns):
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     # Create study that maximize
     study = optuna.create_study(direction="maximize")
 
-    func = lambda trial: xgb_objective(trial,X_train_transformed, y_train, X_test_transformed, y_test)
+    func = lambda trial: xgb_objective(trial,X_train, y_train, X_test, y_test, numeric_columns)
 
     # Start optimizing with 10 trials
     study.optimize(func, n_trials=10)
@@ -150,14 +154,14 @@ def run_experiments(X_train_transformed, y_train, X_test_transformed, y_test):
 #@flow(task_runner=SequentialTaskRunner())
 @flow
 def main(date="2021-09-12"):
-    mlflow.set_tracking_uri("sqlite:///mlflow.db")
-    mlflow.set_experiment("wine_qualit_clf")    
+    mlflow.set_tracking_uri("sqlite:///mlflow-experiments.db")
+    mlflow.set_experiment("wine_quality_clf")    
     
     df, numeric_columns = prepare_data()
     
-    X_train_transformed, X_test_transformed, y_train, y_test, model, ct = train_model(df, numeric_columns, date)
+    X_train, X_test, y_train, y_test, pipe = train_model(df, numeric_columns)
         
-    run_experiments(X_train_transformed, y_train, X_test_transformed, y_test)
+    run_experiments(X_train, y_train, X_test, y_test, numeric_columns)
    
 
     
