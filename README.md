@@ -3,7 +3,7 @@
 
 Problem
 
-This is a simple end-to-end mlops project which takes data from capital bikeshare and transforms it with machine learning pipelines from training, model tracking and experimenting with mlflow, ochestration with prefect as workflow tool to deploying the model as a web service.
+This is a simple end-to-end mlops project organized by [MLOpsZoomCamp](https://github.com/DataTalksClub/mlops-zoomcamp) 
 
 ### DATA 
 Citation Request:
