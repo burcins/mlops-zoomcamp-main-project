@@ -47,7 +47,7 @@ In a new terminal window or tab run the command below to start prefect orion ser
 
 In a new terminal window or tab run the command below to start Local Mlflow Server
 
-      mlflow ui --backend-store-uri sqlite:///mlflow.db
+      mlflow ui --backend-store-uri sqlite:///mlflow-experiments.db
       
 
 
