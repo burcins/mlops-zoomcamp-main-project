@@ -1,1 +1,26 @@
-MLOPS PROJECT (End to End)
+# END TO END MLOPS PROJECT
+## MULTICLASS CLASSIFICATION MODEL DEVELOPMENT AND ORCHESTRATION OPERATIONS 
+
+Problem
+
+This is a simple end-to-end mlops project which takes data from capital bikeshare and transforms it with machine learning pipelines from training, model tracking and experimenting with mlflow, ochestration with prefect as workflow tool to deploying the model as a web service.
+
+### DATA 
+Citation Request:
+  This dataset is public available for research. The details are described in [Cortez et al., 2009]. 
+
+  P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
+  Modeling wine preferences by data mining from physicochemical properties.
+  In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.
+
+  Available at: [@Elsevier] http://dx.doi.org/10.1016/j.dss.2009.05.016
+                [Pre-press (pdf)] http://www3.dsi.uminho.pt/pcortez/winequality09.pdf
+                [bib] http://www3.dsi.uminho.pt/pcortez/dss09.bib
+           
+
+### PROBLEM
+
+This is a simple end-to-end mlops project including data exploration, experimenting and model development as well as experiment tracking with MLFlow and ochestration with Prefect as workflow tool to deploying the model as a web service.
+
+For this project publicly available Wine data and was used and a simple multiclass classification model was developed to predict wine quality and assign a quality rate between 3 to 9, based on ingredients of the product as predictors. 
+
