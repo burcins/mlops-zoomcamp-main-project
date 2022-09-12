@@ -27,6 +27,8 @@ For this project publicly available Wine data and was used and a simple multicla
 
 ## PROJECT SETUP
 
+### AUTO MODEL REGISTRATION
+
 Clone the project from the repository
 
       git clone https://github.com/burcins/mlops-zoomcamp-main-project/
@@ -54,4 +56,30 @@ In a new terminal window or tab run the command below to start Local Mlflow Serv
       mlflow ui --backend-store-uri sqlite:///mlflow-experiments.db
       
 ![MLFlow](https://github.com/burcins/mlops-zoomcamp-main-project/blob/master/screenshots/mlflow.png?raw=true)
+
+### MANUALLY TRACK EXPERIMENTS
+
+Above process automatically run experiments and picked the best model by accuracy and register that model in "Staging" stage. 
+If one prefer to run manual experiments one should install environment with this command ;
+
+      pipenv install 
+      
+Then manually trigger main.py file with this command;
+
+      python3 main.py
+
+This will run experiments and log the records to both MLFlow experiment page as well as create run in Prefect. 
+
+
+## Model as a Webservice
+
+Webservice itself allows user to run apart from the main tasks. 
+
+After changing directory to webservice folder you can simply run docker to build a docker container, and then when you run the container it will test the model to predict a specific wine's quality based on its features sent as a JSON file.
+
+      sudo docker build -t wine-quality-prediction-service:v1 .
+      
+      sudo docker run -it --rm -p 9696:9696 wine-quality-prediction-service:v1
+      
+  
 
