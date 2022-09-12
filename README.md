@@ -38,6 +38,7 @@ Change to mlops-project directory
 Setup and install project dependencies
 
       make setup
+      ![Done](https://github.com/burcins/mlops-zoomcamp-main-project/blob/master/screenshots/dockerdone.png?raw=true)
 
 Start Local Prefect Server
 
