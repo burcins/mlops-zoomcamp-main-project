@@ -47,9 +47,11 @@ In a new terminal window or tab run the command below to start prefect orion ser
 
       prefect orion start
 
+![Prefect](https://github.com/burcins/mlops-zoomcamp-main-project/blob/master/screenshots/prefect.png?raw=true)
+
 In a new terminal window or tab run the command below to start Local Mlflow Server
 
       mlflow ui --backend-store-uri sqlite:///mlflow-experiments.db
       
-
+![MLFlow](https://github.com/burcins/mlops-zoomcamp-main-project/blob/master/screenshots/mlflow.png?raw=true)
 
