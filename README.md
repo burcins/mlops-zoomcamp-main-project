@@ -24,3 +24,30 @@ This is a simple end-to-end mlops project including data exploration, experiment
 
 For this project publicly available Wine data and was used and a simple multiclass classification model was developed to predict wine quality and assign a quality rate between 3 to 9, based on ingredients of the product as predictors. 
 
+
+## PROJECT SETUP
+
+Clone the project from the repository
+
+      git clone https://github.com/burcins/mlops-zoomcamp-main-project/
+
+Change to mlops-project directory
+
+      cd mlops-zoomcamp-main-project
+
+Setup and install project dependencies
+
+      make setup
+
+Start Local Prefect Server
+
+In a new terminal window or tab run the command below to start prefect orion server
+
+      prefect orion start
+
+In a new terminal window or tab run the command below to start Local Mlflow Server
+
+      mlflow ui --backend-store-uri sqlite:///mlflow.db
+      
+
+
