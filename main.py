@@ -21,13 +21,14 @@ import mlflow
 from mlflow.tracking import MlflowClient
 
 from prefect import flow, task, get_run_logger
-#from prefect.task_runners import SequentialTaskRunner
-from prefect.infrastructure import Process
+from prefect.task_runners import SequentialTaskRunner
 
 from prefect.deployments import Deployment
 from prefect.orion.schemas.schedules import RRuleSchedule
 
-from prefect.flow_runners import SubprocessFlowRunner
+#from prefect.flow_runners import SubprocessFlowRunner
+from prefect.infrastructure import Process
+
 from datetime import timedelta
 
 

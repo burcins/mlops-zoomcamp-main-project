@@ -12,9 +12,9 @@ pandas = "*"
 numpy = "*"
 seaborn = "*"
 matplotlib = "*"
-prefect = "==2.0b5"
-xgboost = "*"
-prefect-ray = "*"
+xgboost = "==1.3.3"
+scikit-learn = "==1.1.1"
+prefect = "*"
 
 [dev-packages]
 
